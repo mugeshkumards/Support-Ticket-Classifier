@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI-powered support ticket classifier with real-time classification, PII redaction, and smart escalation." />
+  <title>Support Ticket Classifier</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎟️</text></svg>" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="header-icon">🎟️</div>
+    <h1>Support Ticket Classifier</h1>
+    <span class="header-badge">OpenRouter · GPT-4o-mini</span>
+  </header>
+
+  <!-- ===== MAIN GRID ===== -->
+  <main class="main">
+
+    <!-- LEFT: Ticket Input -->
+    <section class="panel" id="input-panel">
+      <h2 class="panel-title">Ticket Input</h2>
+
+      <div class="sample-chips" id="sample-chips"></div>
+
+      <textarea
+        id="ticket-body"
+        class="ticket-textarea"
+        placeholder="Paste or type a customer support ticket here…"
+        spellcheck="false"
+      ></textarea>
+
+      <div class="input-actions">
+        <input
+          type="text"
+          id="ticket-subject"
+          class="subject-input"
+          placeholder="Subject (optional)"
+        />
+        <select id="channel-select" class="channel-select">
+          <option value="web_form">Web Form</option>
+          <option value="email">Email</option>
+        </select>
+        <button id="classify-btn" class="classify-btn">
+          <span class="spinner"></span>
+          <span class="btn-text">Classify Ticket</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- RIGHT: Classification Result -->
+    <section class="panel" id="result-panel">
+      <h2 class="panel-title">Classification Result</h2>
+
+      <div class="error-banner" id="error-banner"></div>
+
+      <div class="result-placeholder" id="result-placeholder">
+        <span class="result-placeholder-icon">🎯</span>
+        <span>Enter a ticket and click <strong>Classify</strong> to see results</span>
+        <span style="font-size:0.75rem;color:var(--text-muted)">Ctrl+Enter to submit</span>
+      </div>
+
+      <div class="result-content" id="result-content">
+        <!-- Summary -->
+        <div class="reasoning-section" style="margin-bottom:14px">
+          <div class="reasoning-label">Summary</div>
+          <div class="reasoning-text" id="res-summary">—</div>
+        </div>
+
+        <!-- Category + Team -->
+        <div class="result-grid">
+          <div class="result-card">
+            <div class="result-card-label">Category</div>
+            <div class="result-card-value" id="res-category">—</div>
+          </div>
+          <div class="result-card">
+            <div class="result-card-label">Assigned Team</div>
+            <div class="result-card-value" id="res-team">—</div>
+          </div>
+        </div>
+
+        <!-- Priority + Sentiment -->
+        <div class="result-grid">
+          <div class="result-card">
+            <div class="result-card-label">Priority</div>
+            <div><span class="badge" id="res-priority">—</span></div>
+          </div>
+          <div class="result-card">
+            <div class="result-card-label">Sentiment</div>
+            <div><span class="badge" id="res-sentiment">—</span></div>
+          </div>
+        </div>
+
+        <!-- Confidence -->
+        <div class="confidence-section">
+          <div class="confidence-header">
+            <span class="confidence-label">Confidence Score — <span id="conf-percent">0.00</span></span>
+            <span class="confidence-value" id="conf-value">0%</span>
+          </div>
+          <div class="confidence-track">
+            <div class="confidence-fill" id="conf-fill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Reasoning -->
+        <div class="reasoning-section">
+          <div class="reasoning-label">Reasoning</div>
+          <div class="reasoning-text" id="res-reasoning">—</div>
+        </div>
+
+        <!-- Alert banners -->
+        <div class="alert-banners">
+          <div class="alert-banner warning" id="alert-human-review">
+            ⚠ Flagged for human review
+          </div>
+          <div class="alert-banner danger" id="alert-injection">
+            🛡 Injection attempt blocked
+          </div>
+          <div class="alert-banner info" id="alert-escalated">
+            ⬆ Escalated to fallback model
+          </div>
+        </div>
+
+        <!-- Meta -->
+        <div class="meta-row" id="meta-row"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
