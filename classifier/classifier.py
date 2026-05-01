@@ -35,6 +35,63 @@ from .schema import (
 
 logger = logging.getLogger(__name__)
 
+# ── OpenAI function-calling tool definition ──────────────────────────
+_CLASSIFY_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "submit_classification",
+        "description": "Submit the structured classification for a support ticket.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "string",
+                    "enum": [c.value for c in Category],
+                    "description": "The ticket category.",
+                },
+                "team": {
+                    "type": "string",
+                    "enum": [t.value for t in Team],
+                    "description": "The team to route the ticket to.",
+                },
+                "priority": {
+                    "type": "string",
+                    "enum": ["low", "medium", "high", "urgent"],
+                    "description": "Ticket priority level.",
+                },
+                "sentiment": {
+                    "type": "string",
+                    "enum": ["positive", "neutral", "negative", "frustrated"],
+                    "description": "Customer sentiment.",
+                },
+                "confidence": {
+                    "type": "number",
+                    "minimum": 0.0,
+                    "maximum": 1.0,
+                    "description": "Classification confidence (0-1).",
+                },
+                "summary": {
+                    "type": "string",
+                    "description": "Brief summary of the ticket (max 300 chars).",
+                },
+                "reasoning": {
+                    "type": "string",
+                    "description": "Reasoning behind the classification (max 500 chars).",
+                },
+            },
+            "required": [
+                "category",
+                "team",
+                "priority",
+                "sentiment",
+                "confidence",
+                "summary",
+                "reasoning",
+            ],
+        },
+    },
+}
+
 
 class ClassificationError(Exception):
     pass
