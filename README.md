@@ -1,35 +1,48 @@
-# AI-Powered Support Ticket Classifier
+# 🤖 AI-Powered Support Ticket Classifier
 
-> Project 01 — LLM Engineering
->
-> An e-commerce company receives customer issues from two channels (web forms
-> and emails). This service classifies each ticket and returns a JSON object
-> that downstream services (routing, SLA, analytics) can consume.
+> **Project 01 — LLM Engineering | Agentic AI**
 
-For each ticket the classifier returns:
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Render-4c51bf?style=for-the-badge)](https://support-ticket-classifier-jtu5.onrender.com)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/mugeshkumards/Support-Ticket-Classifier)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776ab?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![OpenAI](https://img.shields.io/badge/OpenAI_API-Compatible-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openrouter.ai)
 
-- **Category** — billing, shipping, product defect, returns, login, etc.
-- **Team** — which team should own it (billing, logistics, engineering, …)
-- **Priority** — low / medium / high / urgent
-- **Sentiment** — positive / neutral / negative / frustrated
-- **Confidence** — the model's honest self-assessment (0.0 – 1.0)
-- A short `summary` and `reasoning` for human reviewers
+---
 
-## Skills covered
+## 📋 Resume Project Summary
 
-| Skill | Where it lives |
+> **AI-Powered Support Ticket Classifier** — An end-to-end LLM-based system that automatically classifies e-commerce support tickets into actionable categories with PII redaction, cost tracking, and agentic fallback.
+
+### 🎯 Key Highlights (for Resume / Portfolio)
+
+- **Built a production-grade AI classification pipeline** using OpenAI-compatible APIs (via OpenRouter) with structured tool-calling to auto-categorize support tickets by category, priority, sentiment, and team routing
+- **Implemented agentic fallback architecture** — primary model (GPT-4o Mini) automatically escalates to a stronger model (Claude 3.5 Sonnet) when classification confidence drops below threshold
+- **Designed PII redaction engine** using regex + Luhn algorithm to detect and mask emails, phone numbers, credit cards, SSNs, and IP addresses before sending data to LLMs
+- **Engineered structured output with Pydantic validation** — enforced enum-constrained schemas with business-rule validation ensuring 100% type-safe, downstream-ready JSON responses
+- **Built real-time cost tracking system** calculating per-call USD costs across multiple model tiers with aggregate reporting
+- **Developed premium glassmorphism Web UI** with Flask backend — includes sample ticket chips, confidence bars, sentiment badges, and smart alerts for low-confidence and prompt injection detection
+- **Deployed on Render** with Gunicorn for production-ready serving
+
+### 🛠️ Tech Stack
+
+`Python` · `OpenAI API` · `OpenRouter` · `Pydantic` · `Flask` · `Gunicorn` · `HTML/CSS/JS` · `Render`
+
+---
+
+## ✨ Features
+
+| Feature | Description |
 | --- | --- |
-| Schema Design | `classifier/schema.py` — Pydantic + enums |
-| Structured Output from LLM | `classifier/classifier.py` — Anthropic tool-use |
-| Validate LLM Response | `classifier/classifier.py` — Pydantic + business rules |
-| Control LLM's Non-Determinism | `temperature=0`, enum-constrained schema, deterministic prompt |
-| Prompt Injection | `classifier/prompts.py` — `<ticket>` delimiter, instruction hierarchy |
-| Prompt Versioning | `classifier/prompts.py` — every result stamps `prompt_version` |
-| Cost Calculation | `classifier/cost.py` — per-call USD + aggregate `CostTracker` |
-| PII Detection / Redaction | `classifier/pii.py` — emails, phones, cards (Luhn-checked), SSNs, IPs |
-| Fallback / Retry | `classifier/classifier.py` — exp. backoff + Haiku → Sonnet escalation |
+| 🏷️ **Multi-label Classification** | Category, team routing, priority, sentiment — all in one API call |
+| 🔒 **PII Redaction** | Emails, phones, credit cards (Luhn-checked), SSNs, IPs masked before LLM |
+| 🔄 **Agentic Fallback** | Low confidence → auto-escalate to stronger model |
+| 💰 **Cost Tracking** | Per-call USD breakdown with aggregate totals |
+| 🛡️ **Prompt Injection Guard** | Delimiter-based isolation + instruction hierarchy |
+| 📌 **Prompt Versioning** | Every result stamped with `prompt_version` for traceability |
+| 🎨 **Premium Web UI** | Dark glassmorphism theme with real-time confidence visualization |
+| ⚡ **Retry with Backoff** | Exponential backoff for rate limits and transient errors |
 
-## Architecture
+## 🏗️ Architecture
 
 ```
                      +----------------------+
@@ -43,67 +56,113 @@ For each ticket the classifier returns:
                                 |
                                 v
                      +----------------------+
-                     | Anthropic Messages   |  primary: claude-haiku-4-5
-                     | API (tool-use forced)|  temperature=0
+                     |  OpenAI-compatible   |  primary: gpt-4o-mini
+                     |  API (tool-use)      |  temperature=0
                      +----------+-----------+
                                 |
                                 v
                      +----------------------+
                      |   Pydantic validate  |  enums, ranges, length caps
-                     |   + business rules   |  category->team consistency
+                     |   + business rules   |  category→team consistency
                      +----------+-----------+
                                 |
-                  low conf / failure
+                   low conf / failure
                                 |
                                 v  (escalate once)
                      +----------------------+
-                     |  claude-sonnet-4-6   |
+                     | claude-3.5-sonnet    |
                      +----------+-----------+
                                 |
                                 v
                   TicketClassification (JSON)
 ```
 
-## Setup
+## 📁 Project Structure
+
+```
+support-ticket-classifier/
+├── classifier/
+│   ├── __init__.py          # Package exports
+│   ├── classifier.py        # Core classification engine + retry logic
+│   ├── cost.py              # Per-call USD cost tracking
+│   ├── pii.py               # PII detection & redaction
+│   ├── prompts.py           # Versioned prompt templates
+│   └── schema.py            # Pydantic models + enum definitions
+├── demo_ui/
+│   ├── index.html           # Premium glassmorphism Web UI
+│   ├── styles.css           # Dark theme styling
+│   └── app.js               # Frontend logic
+├── data/
+│   └── sample_tickets.json  # Test ticket dataset
+├── tests/                   # Unit tests (no API calls)
+├── config.py                # Environment & model configuration
+├── server.py                # Flask API server
+├── main.py                  # CLI entry point
+├── requirements.txt         # Python dependencies
+├── start.sh                 # Render deployment script
+└── .env.example             # Environment template
+```
+
+## 🔧 Skills Covered
+
+| Skill | Where it lives |
+| --- | --- |
+| Schema Design | `classifier/schema.py` — Pydantic + enums |
+| Structured Output from LLM | `classifier/classifier.py` — OpenAI tool-use |
+| Validate LLM Response | `classifier/classifier.py` — Pydantic + business rules |
+| Control LLM Non-Determinism | `temperature=0`, enum-constrained schema, deterministic prompt |
+| Prompt Injection Defense | `classifier/prompts.py` — `<ticket>` delimiter, instruction hierarchy |
+| Prompt Versioning | `classifier/prompts.py` — every result stamps `prompt_version` |
+| Cost Calculation | `classifier/cost.py` — per-call USD + aggregate `CostTracker` |
+| PII Detection / Redaction | `classifier/pii.py` — emails, phones, cards (Luhn), SSNs, IPs |
+| Fallback / Retry | `classifier/classifier.py` — exp. backoff + model escalation |
+
+## 🚀 Quick Start
+
+### Local Setup
 
 ```bash
-cd "support-ticket-classifier"
+# Clone the repository
+git clone https://github.com/mugeshkumards/Support-Ticket-Classifier.git
+cd Support-Ticket-Classifier
+
+# Install dependencies
 pip install -r requirements.txt
+
+# Configure API key
 cp .env.example .env
 # Edit .env and add your OPENROUTER_API_KEY
 ```
 
-## Run
-
-Classify the bundled sample tickets:
+### CLI Usage
 
 ```bash
+# Classify bundled sample tickets
 python main.py
-```
 
-Classify your own file (same JSON shape as `data/sample_tickets.json`):
-
-```bash
+# Classify your own tickets
 python main.py path/to/your_tickets.json
-```
 
-The classified results are printed to **stdout** as a JSON array. Progress and
-the cost summary go to **stderr**, so you can pipe stdout to a file:
-
-```bash
+# Pipe output to file
 python main.py > classifications.json
 ```
 
-## Run the offline tests
+### Web UI
 
-The unit tests do not call the API — they cover redaction, schema validation,
-and cost calculation:
+```bash
+python server.py
+# Open http://localhost:5000
+```
+
+## 🧪 Run Tests
 
 ```bash
 python -m pytest tests/
 ```
 
-## Example output
+Tests cover PII redaction, schema validation, and cost calculation — no API calls needed.
+
+## 📊 Example Output
 
 ```json
 {
@@ -115,39 +174,43 @@ python -m pytest tests/
   "confidence": 0.93,
   "summary": "Customer was charged twice for order #88421 and is requesting a refund of the duplicate charge.",
   "reasoning": "Two charges on the same card for one order is a billing/payment issue, blocks the customer's refund, and customer tone is frustrated. Routes to billing_team.",
-  "model_used": "claude-haiku-4-5",
+  "model_used": "openai/gpt-4o-mini",
   "prompt_version": "v1.0.0",
   "classified_at": "2026-04-28T12:34:56.789012"
 }
 ```
 
-## Notes on model choice
+## 💡 Model Strategy
 
-- **Primary: `claude-haiku-4-5`** — fast and cheap ($1 / $5 per MTok), and
-  classification with a tightly-bounded schema is exactly the kind of task
-  Haiku is built for.
-- **Fallback: `claude-sonnet-4-6`** — used only when Haiku returns low
-  confidence or fails validation. This keeps the average per-ticket cost
-  near Haiku pricing while preserving accuracy on the hard tickets.
+| Model | Role | Input (per 1M) | Output (per 1M) |
+| --- | --- | --- | --- |
+| `gpt-4o-mini` | Primary — fast & cheap | $0.15 | $0.60 |
+| `claude-3.5-sonnet` | Fallback — high accuracy | $3.00 | $15.00 |
 
-Pricing snapshot (per 1M tokens):
+The dual-model approach keeps average cost near GPT-4o Mini pricing while preserving accuracy on edge-case tickets through agentic escalation.
 
-| Model | Input | Output |
-| --- | --- | --- |
-| claude-haiku-4-5 | $1.00 | $5.00 |
-| claude-sonnet-4-6 | $3.00 | $15.00 |
-| claude-opus-4-7 | $5.00 | $25.00 |
+## 🌐 Deployment
 
-## Web UI
-
-A premium, glassmorphism-inspired dark theme UI is also available to interactively test the classifier. It uses a lightweight Flask backend.
+Deployed on **Render** using Gunicorn:
 
 ```bash
-pip install flask flask-cors
-python server.py
+# start.sh
+gunicorn server:app
 ```
 
-Then open `http://localhost:5000` in your browser. The UI includes:
-- **Sample Chips** to quickly test edge cases (like Prompt Injection, Double Billing, etc).
-- **Real-time Confidence Bars** and badge-styled category displays.
-- **Smart Alerts** for low confidence (flagged for review), prompt injection blocking, and model fallback escalation.
+**Live Demo:** [https://support-ticket-classifier-jtu5.onrender.com](https://support-ticket-classifier-jtu5.onrender.com)
+
+> **Note:** The Render free tier may take ~30 seconds to cold-start. Please be patient on the first load.
+
+---
+
+## 👤 Author
+
+**Mugesh Kumar D S**
+- GitHub: [@mugeshkumards](https://github.com/mugeshkumards)
+
+---
+
+<p align="center">
+  <b>⭐ If you found this project helpful, give it a star!</b>
+</p>
