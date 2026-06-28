@@ -201,7 +201,7 @@ class TicketClassifier:
                         "type": "function",
                         "function": {"name": "submit_classification"},
                     },
-                    max_tokens=1024,
+                    max_tokens=512,
                 )
 
                 if response.usage:

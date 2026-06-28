@@ -5,7 +5,7 @@ load_dotenv()
 
 # OpenRouter exposes an OpenAI-compatible API at this base URL.
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENROUTER_BASE_URL = "https://aicredits.in/v1"
 
 # Optional headers OpenRouter uses for analytics / leaderboards.
 OPENROUTER_APP_NAME = os.getenv("OPENROUTER_APP_NAME", "support-ticket-classifier")
